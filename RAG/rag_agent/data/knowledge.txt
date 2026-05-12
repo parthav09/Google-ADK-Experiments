@@ -1,0 +1,5 @@
+Google ADK is an Agent Development Kit for building AI agents.
+A RAG system retrieves relevant information from documents before answering.
+RAG usually has three parts: loading documents, retrieving relevant chunks, and generating an answer.
+For local development, a simple keyword retriever is enough to understand the flow.
+Later, embeddings and vector databases can improve retrieval quality.
