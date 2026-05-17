@@ -1,9 +1,13 @@
+import os
+
 from google.adk.agents import Agent
 from .retriever import search_docs, get_last_search
 
+MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+
 retriever_agent = Agent(
     name = "retriever_agent",
-    model = "gemini-2.5-flash",
+    model = MODEL,
     description = "Handles questions that require searching local documents",
     instruction = """
     You are a retriever agent that can search local documents for relevant context.
@@ -15,7 +19,7 @@ retriever_agent = Agent(
 
 memory_agent = Agent(
     name = "memory_agent",
-    model = "gemini-2.5-flash",
+    model = MODEL,
     description = "Handles memory and context management for the rag system",
     instruction = """
         You are a session memory specialist
@@ -26,7 +30,7 @@ memory_agent = Agent(
 )
 
 root_agent = Agent(name = "coordinator_agent",
-                model = "gemini-2.5-flash",
+                model = MODEL,
                 instruction = """
                 You are a helpful coordinator for a local RAG system.
                 For document questions, route to retriever_agent.

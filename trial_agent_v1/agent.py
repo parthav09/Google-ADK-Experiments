@@ -1,6 +1,10 @@
+import os
+
 from google.adk.agents import Agent
 import datetime
 from zoneinfo import ZoneInfo
+
+MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
 def get_weather(city):
     """ Returns the current weather in a specified city
@@ -42,7 +46,7 @@ def get_current_time(city):
     
 
 root_agent = Agent(
-    model='gemini-2.5-flash',
+    model=MODEL,
     name='root_agent',
     description='A helpful assistant for user questions.',
     instruction="""

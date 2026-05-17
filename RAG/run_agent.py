@@ -1,17 +1,17 @@
 import asyncio
 import logging
+from pathlib import Path
 
 from dotenv import load_dotenv
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
 
-from rag_agent.agent import root_agent
-
 APP_NAME = "adk_rag_starter"
 USER_ID = "local_user"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-load_dotenv("rag_agent/.env")
+load_dotenv(PROJECT_ROOT / ".env")
 logging.getLogger("google_genai.types").setLevel(logging.ERROR)
 logging.getLogger("google_genai.types").disabled = True
 
@@ -41,6 +41,8 @@ async def call_agent(runner, session_id, message):
     print(f"\nAgent: {final_response}\n")
 
 async def main():
+    from rag_agent.agent import root_agent
+
     session_service = InMemorySessionService()
     session = await session_service.create_session(
         app_name = APP_NAME,
