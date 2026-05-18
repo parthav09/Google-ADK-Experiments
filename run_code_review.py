@@ -5,7 +5,7 @@ import sys
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
-
+from datetime import datetime
 
 APP_NAME = "code_review_pipeline_app"
 USER_ID = "local_user"
@@ -94,7 +94,30 @@ FILE: {file_path}
 
     return "\n\n" + "=" * 80 + "\n\n".join(code_parts)
 
-async def run_pipeline(codebase_text):
+def save_report(final_review, reviewed_path):
+    reports_dir = Path("reports")
+    reports_dir.mkdir(exist_ok=True)
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    report_path = reports_dir / f"code_review_report_{timestamp}.md"
+
+    report_content = f"""# Code Review Report
+
+## Reviewed Path
+
+{reviewed_path}
+
+---
+
+{final_review}
+"""
+
+    report_path.write_text(report_content, encoding="utf-8")
+
+    return report_path
+
+
+async def run_pipeline(codebase_text, reviewed_path):
     from code_review_pipeline.agent import root_agent
 
     session_service = InMemorySessionService()
@@ -155,6 +178,15 @@ CODEBASE END
         session_id=session.id,
     )
 
+    final_review = updated_session.state.get("final_review")
+
+    if final_review:
+        report_path = save_report(final_review, reviewed_path)
+        print("=" * 80)
+        print("Report saved")
+        print("=" * 80)
+        print(report_path)
+
     print("=" * 80)
     print("Session state keys")
     print("=" * 80)
@@ -177,8 +209,7 @@ async def main():
         print("No readable code files found.")
         return
 
-    await run_pipeline(codebase_text)
-
+    await run_pipeline(codebase_text, path)
 
 if __name__ == "__main__":
     asyncio.run(main())
